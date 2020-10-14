@@ -205,3 +205,22 @@ form.create-orphanage-form button.confirm-button svg {
 form.create-orphanage-form button.confirm-button:hover {
   background: #36CF82;
 }
+
+.close {
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.img-container {
+  position: relative;
+}

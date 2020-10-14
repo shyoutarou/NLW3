@@ -2,7 +2,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react"
 import { Map, Marker, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
 
-import { FiArrowLeft, FiPlus } from "react-icons/fi"
+import { FiArrowLeft, FiPlus, FiX } from "react-icons/fi"
 
 import '../styles/pages/create-orphanage.css'
 import Sidebar from "../components/Sidebar"
@@ -51,7 +51,7 @@ export default function CreateOrphanage() {
     try {
       await api.post('/orphanages', data)
       alert('Cadastro realizado com sucesso!')
-      push('app')
+      push('/app')
     } catch {
       alert('Erro ao cadastrar')
     }
@@ -67,6 +67,13 @@ export default function CreateOrphanage() {
       return URL.createObjectURL(img)
     })
     setPreviewImages(selectedImagesPreview)
+  }
+
+  const removeImage = (removeIndex: number) => {
+    const newPreviewImages = previewImages.filter((img, index) => index !== removeIndex)
+    const newImages = images.filter((img, index) => index !== removeIndex)
+    setImages(newImages)
+    setPreviewImages(newPreviewImages)
   }
 
   return (
@@ -110,7 +117,12 @@ export default function CreateOrphanage() {
 
                 {previewImages.map((img, index) => {
                   return (
-                    <img src={img} key={index} alt={name}/>
+                    <div className="img-container">
+                      <div className="close" onClick={() => removeImage(index)}>
+                        <FiX size={20} color='black' />
+                      </div>
+                      <img src={img} key={index} alt={name}></img>
+                    </div>
                   )
                 })}
 
