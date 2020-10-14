@@ -19,7 +19,7 @@ export default {
         })
 
         const data = { latitude, longitude, name, opening_hours,
-            instructions, about, open_on_weekends, images }
+            instructions, about, open_on_weekends: open_on_weekends === 'true', images }
 
         const schema = Yup.object().shape({
             name: Yup.string().required(),
