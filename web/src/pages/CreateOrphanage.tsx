@@ -7,10 +7,15 @@ import { FiArrowLeft, FiPlus } from "react-icons/fi"
 import '../styles/pages/create-orphanage.css'
 import Sidebar from "../components/Sidebar"
 import mapIcon from "../utils/mapIcon"
+import api from "../services/api"
+import { useHistory } from "react-router-dom"
 
 export default function CreateOrphanage() {
 
+  const { push } = useHistory()
+
   const [position, setPosition] = useState({ lat: 0, lng: 0 })
+
 
   const [name, setName] = useState('')
   const [about, setAbout] = useState('')
@@ -27,10 +32,29 @@ export default function CreateOrphanage() {
     })
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     const { lat: latitude, lng: longitude } = position
-    console.log(position, about, name, instructions, opening_hours)
+  
+    const data = new FormData()
+    data.append('name', name)
+    data.append('latitude', String(latitude))
+    data.append('longitude', String(latitude))
+    data.append('about', about)
+    data.append('instructions', instructions)
+    data.append('opening_hours', opening_hours)
+    data.append('open_on_weekends', String(open_on_weekends))
+    images.forEach(img => {
+      data.append('images', img)
+    })
+
+    try {
+      await api.post('/orphanages', data)
+      alert('Cadastro realizado com sucesso!')
+      push('app')
+    } catch {
+      alert('Erro ao cadastrar')
+    }
   }
 
   const handleSelectImages = (e: ChangeEvent<HTMLInputElement>) => {
