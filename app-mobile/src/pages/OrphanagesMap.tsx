@@ -4,7 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Marker, Callout } from 'react-native-maps'
 import mapMarker from '../images/map-marker.png'
 import { Feather } from '@expo/vector-icons'
 import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from '@expo-google-fonts/nunito'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import api from '../services/api'
 
@@ -22,11 +22,11 @@ const OrphanagesMap = () => {
 
     const { navigate } = useNavigation()
 
-    useEffect(() => {
+    useFocusEffect(() => {
         api.get('/orphanages').then(res => {
             setOrphanages(res.data)
         })
-    }, [])
+    })
 
     return (
         <View style={styles.container}>

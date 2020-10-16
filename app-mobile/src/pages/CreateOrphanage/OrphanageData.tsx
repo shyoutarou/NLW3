@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, Switch, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { ScrollView, View, StyleSheet, Switch, Text, TextInput, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { RectButton } from 'react-native-gesture-handler';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'
+import api from '../../services/api';
 
 export default function OrphanageData() {
 
@@ -23,11 +24,36 @@ export default function OrphanageData() {
   const [open_on_weekends, setOpenOnWeekends] = useState(true)
   const [images, setImages] = useState<string[]>([])
 
+  const { navigate } = useNavigation()
 
   const { params: { position: { latitude, longitude } } } = useRoute<RouteProp<RouteProps, 'data'>>()
 
-  const handleCreateOrphanage = () => {
-    console.log(name, about, instructions, opening_hours, open_on_weekends, latitude, longitude)
+  const handleCreateOrphanage = async () => {
+    const data = new FormData()
+
+    data.append('name', name)
+    data.append('about', about)
+    data.append('latitude', String(latitude))
+    data.append('longitude', String(longitude))
+    data.append('instructions', instructions)
+    data.append('opening_hours', opening_hours)
+    data.append('open_on_weekends', String(open_on_weekends))
+
+    images.forEach((image, index) => {
+      data.append('images', {
+        type: 'image/jpg',
+        uri: image,
+        name: `${index}-${Date.now()}.jpg`
+      } as unknown as Blob)
+    })
+
+    try {
+      await api.post('/orphanages', data)
+      navigate('map')
+    } catch {
+
+    }
+
   }
 
   const handleSelectImages = async () => {
@@ -48,6 +74,11 @@ export default function OrphanageData() {
 
     const { uri } = result
     setImages([...images, uri])
+  }
+
+  const deleteImage = (removeIndex: number) => {
+    const newImages = images.filter((image, index) => index !== removeIndex)
+    setImages(newImages)
   }
 
   return (
@@ -73,10 +104,16 @@ export default function OrphanageData() {
       <Text style={styles.label}>Fotos</Text>
 
       <View style={styles.uploadedImagesContainer}>
-        {images.map(image => {
+        {images.map((image, index) => {
           return (
-            <Image key={image} source={{ uri: image }}
-            style={styles.uploadedImage}/>
+            <View key={image} style={styles.imageContainer}>
+              <Image source={{ uri: image }}
+              style={styles.uploadedImage}>
+              </Image>
+              <TouchableOpacity onPress={() => deleteImage(index)} style={styles.deleteImage}>
+                <Feather name='x' size={20} color='black' />
+              </TouchableOpacity>
+            </View>
           )
         })}
       </View>
@@ -189,9 +226,25 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 20,
     marginBottom: 32,
-    marginRight: 8
+    marginRight: 8,
+    position: 'relative'
   },
   uploadedImagesContainer: {
     flexDirection: 'row'
+  },
+  deleteImage: {
+    width: 30,
+    height: 30,
+    backgroundColor: 'white',
+    position: 'absolute',
+    right: 8,
+    top: 0,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  imageContainer: {
+    position: 'relative',
   }
 })
