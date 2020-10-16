@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Dimensions, Text } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
@@ -11,8 +11,10 @@ export default function SelectMapPosition() {
   const navigation = useNavigation();
 
   function handleNextStep() {
-    navigation.navigate('data');
+    navigation.navigate('data', { position });
   }
+
+  const [position, setPosition] = useState({ latitude: 0, longitude: 0 })
 
   return (
     <View style={styles.container}>
@@ -24,11 +26,14 @@ export default function SelectMapPosition() {
           longitudeDelta: 0.008,
         }}
         style={styles.mapStyle}
+        onPress={e => {
+          setPosition(e.nativeEvent.coordinate)
+        }}
       >
-        <Marker 
+        {position.latitude !== 0 && position.longitude !== 0 && <Marker 
           icon={mapMarkerImg}
-          coordinate={{ latitude: -27.2092052, longitude: -49.6401092 }}
-        />
+          coordinate={{ latitude: position.latitude, longitude: position.longitude }}
+        />}
       </MapView>
 
       <RectButton style={styles.nextButton} onPress={handleNextStep}>
