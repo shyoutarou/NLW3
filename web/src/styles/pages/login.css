@@ -135,3 +135,14 @@
     color: #5C8599;
     margin-bottom: 20px;
 }
+
+.homeform-eye {
+    position: absolute;
+    bottom: 52px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.homeform-form-input {
+    position: relative;
+}
