@@ -3,6 +3,7 @@ import OrphanagesController from './controllers/OrphanagesController'
 import UsersController from './controllers/UsersController'
 import multer from 'multer'
 import multerConfig from './config/upload'
+import authMiddleware from './middlewares/auth'
 
 const routes = Router()
 const upload = multer(multerConfig)
