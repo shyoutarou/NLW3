@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import bcrypt from 'bcrypt'
 import Orphanage from './Orphanage'
 
 @Entity('users')
@@ -20,6 +21,10 @@ class User {
     @JoinColumn({ name: 'user_id' })
     orphanages: Orphanage[]
 
+    @BeforeInsert()
+    async beforeInsert() {
+        this.password = await bcrypt.hash(this.password, 10)
+    }
 }
 
 export default User

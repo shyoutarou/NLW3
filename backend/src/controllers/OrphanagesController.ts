@@ -7,7 +7,7 @@ import * as Yup from 'yup'
 export default {
     async create (req: Request, res: Response) {
         const { latitude, longitude, name, opening_hours,
-            instructions, about, open_on_weekends } = req.body
+            instructions, about, open_on_weekends, user_id } = req.body
     
         const orphanagesRepository = getRepository(Orphanage)
 
@@ -19,7 +19,7 @@ export default {
         })
 
         const data = { latitude, longitude, name, opening_hours,
-            instructions, about, open_on_weekends: open_on_weekends === 'true', images }
+            instructions, about, open_on_weekends: open_on_weekends === 'true', images, user_id }
 
         const schema = Yup.object().shape({
             name: Yup.string().required(),
@@ -31,7 +31,8 @@ export default {
             open_on_weekends: Yup.boolean().required(),
             images: Yup.array(Yup.object().shape({
                 path: Yup.string().required()
-            }))
+            })),
+            user_id: Yup.number().required()
         })
 
         await schema.validate(data, {
