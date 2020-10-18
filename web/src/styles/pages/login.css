@@ -130,3 +130,8 @@
     align-items: center;
     transition: 0.5s;
 }
+
+.homeform-description {
+    color: #5C8599;
+    margin-bottom: 20px;
+}
