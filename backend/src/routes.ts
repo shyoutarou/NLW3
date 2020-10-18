@@ -10,6 +10,7 @@ const upload = multer(multerConfig)
 
 routes.post('/user', UsersController.create)
 routes.post('/user/auth', UsersController.login)
+routes.post('/user/verify', authMiddleware, UsersController.verifyToken)
 routes.post('/orphanages', upload.array('images'), OrphanagesController.create)
 routes.get('/orphanages', OrphanagesController.index)
 routes.get('/orphanages/:id', OrphanagesController.show)

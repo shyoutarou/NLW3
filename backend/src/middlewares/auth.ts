@@ -10,7 +10,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     }
 
     if(header.split(' ').length !== 2) {
-        return res.status(500).json({ message: 'Formato de token inválido!' })
+        return res.status(500).json({ message: 'Formato de token inválidoa!' })
     }
 
     if(header.split(' ')[0] !== 'Bearer') {

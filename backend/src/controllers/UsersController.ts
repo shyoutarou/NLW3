@@ -58,5 +58,14 @@ export default {
         const token = jwt.sign({ id: user.id }, key, { expiresIn: 86400 })
 
         return res.status(200).json({ user, token })
+    },
+    async verifyToken(req: Request, res: Response) {
+
+        const userRepository = getRepository(User)
+
+        const user = await userRepository.findOne(req.body.userId)
+
+        return res.status(200).json(user)
+
     }
 }
