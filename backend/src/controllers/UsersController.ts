@@ -5,6 +5,7 @@ import * as Yup from 'yup'
 import User from "../database/models/User"
 import jwt from 'jsonwebtoken'
 import { key } from '../auth.json'
+import users_view from "../views/users_view"
 
 export default {
     async create(req: Request, res: Response) {
@@ -29,22 +30,27 @@ export default {
 
         await userRepository.save(user)
         
-        return res.status(200).json(user)
+        return res.status(200).json(users_view.render(user))
     },
     
     async login(req: Request, res: Response) {
 
         const { email, password } = req.body
 
+        const data = { email, password }
+
         const schema = Yup.object().shape({
             email: Yup.string().email('Email inválido!').required('O email é obrigatório!'),
             password: Yup.string().required('Senha é obrigatória!')
         })
 
+        await schema.validate(data)
+
         const userRepository = getRepository(User)
 
         const user = await userRepository.findOne({
-            where: { email }
+            where: { email },
+            relations: ['orphanages']
         })
 
         if(!user) {
@@ -57,15 +63,21 @@ export default {
 
         const token = jwt.sign({ id: user.id }, key, { expiresIn: 86400 })
 
-        return res.status(200).json({ user, token })
+        return res.status(200).json({ user: users_view.render(user), token })
     },
     async verifyToken(req: Request, res: Response) {
 
         const userRepository = getRepository(User)
 
-        const user = await userRepository.findOne(req.body.userId)
+        const user = await userRepository.findOne(req.body.userId, {
+            relations: ['orphanages']
+        })
 
-        return res.status(200).json(user)
+        if(!user) {
+            return res.status(500).json({ message: "unknown user" })
+        }
+
+        return res.status(200).json(users_view.render(user))
 
     }
 }
